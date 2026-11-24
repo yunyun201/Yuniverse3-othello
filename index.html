@@ -1,0 +1,277 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yuniverse3 Othello</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #101827;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+header {
+  padding: 22px 10px;
+  background: #18263c;
+}
+h1 { margin: 0; color: #70c9ff; }
+main {
+  max-width: 500px;
+  margin: auto;
+  padding: 18px;
+}
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: 13px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.primary {
+  width: 100%;
+  background: #2688ed;
+  color: white;
+}
+.secondary {
+  background: #34445c;
+  color: white;
+}
+#status {
+  margin: 18px 0;
+  padding: 14px;
+  background: #1c2c43;
+  border-radius: 10px;
+}
+#board {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 3px;
+  padding: 5px;
+  background: #123e2c;
+  border-radius: 8px;
+  width: 100%;
+  aspect-ratio: 1;
+}
+.cell {
+  background: #218653;
+  border: 0;
+  border-radius: 3px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.stone {
+  width: 78%;
+  height: 78%;
+  border-radius: 50%;
+  box-shadow: inset 0 2px 4px #777;
+}
+.black { background: #111; }
+.white { background: #fff; }
+#scores {
+  display: flex;
+  justify-content: space-around;
+  margin: 15px;
+  font-size: 18px;
+}
+#levels {
+  margin: 15px 0;
+}
+select {
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 16px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Yuniverse3</h1>
+  <p>ONLINE OTHELLO</p>
+</header>
+
+<main>
+  <h2>オセロ対戦</h2>
+
+  <div id="status">対戦相手を探してください</div>
+
+  <button class="primary" onclick="findOpponent()">
+    ランダム対戦
+  </button>
+
+  <div id="levels" style="display:none">
+    <h3>相手がいません</h3>
+    <p>コンピューターと対戦しますか？</p>
+    <label>CPUの強さ：</label>
+    <select id="level">
+      <option value="1">レベル1</option>
+      <option value="2">レベル2</option>
+      <option value="3">レベル3</option>
+      <option value="4">レベル4</option>
+      <option value="5">レベル5</option>
+      <option value="6">レベル6</option>
+      <option value="7">レベル7</option>
+      <option value="8">レベル8</option>
+      <option value="9">レベル9</option>
+      <option value="10">レベル10</option>
+      <option value="11">レベル11</option>
+      <option value="12">レベル12</option>
+      <option value="13">レベル13</option>
+      <option value="14">レベル14</option>
+      <option value="15">レベル15</option>
+    </select>
+    <br><br>
+    <button class="primary" onclick="startCPU()">
+      この強さで対戦
+    </button>
+  </div>
+
+  <div id="scores">
+    <span>黒：<b id="blackScore">2</b></span>
+    <span>白：<b id="whiteScore">2</b></span>
+  </div>
+
+  <div id="board"></div>
+
+  <p id="turn">黒の番</p>
+
+  <button class="secondary" onclick="resetGame()">
+    やり直す
+  </button>
+</main>
+
+<script>
+let board = [];
+let turn = 1;
+let gameOver = false;
+let cpuMode = false;
+
+function resetGame() {
+  board = Array.from({length:8},()=>Array(8).fill(0));
+  board[3][3] = -1;
+  board[3][4] = 1;
+  board[4][3] = 1;
+  board[4][4] = -1;
+  turn = 1;
+  gameOver = false;
+  render();
+}
+
+function getFlips(r,c,p) {
+  if(board[r][c] !== 0) return [];
+  let flips = [];
+  for(let dr=-1;dr<=1;dr++) {
+    for(let dc=-1;dc<=1;dc++) {
+      if(!dr && !dc) continue;
+      let line=[];
+      let y=r+dr, x=c+dc;
+      while(y>=0 && y<8 && x>=0 && x<8 && board[y][x]===-p) {
+        line.push([y,x]);
+        y+=dr; x+=dc;
+      }
+      if(line.length && y>=0 && y<8 && x>=0 && x<8 && board[y][x]===p) {
+        flips.push(...line);
+      }
+    }
+  }
+  return flips;
+}
+
+function hasMove(p) {
+  for(let r=0;r<8;r++)
+    for(let c=0;c<8;c++)
+      if(getFlips(r,c,p).length) return true;
+  return false;
+}
+
+function place(r,c) {
+  if(gameOver || !getFlips(r,c,turn).length) return;
+  let flips=getFlips(r,c,turn);
+  board[r][c]=turn;
+  flips.forEach(([y,x])=>board[y][x]=turn);
+  turn=-turn;
+
+  if(!hasMove(turn)) {
+    turn=-turn;
+    if(!hasMove(turn)) {
+      gameOver=true;
+      showWinner();
+    }
+  }
+  render();
+  if(cpuMode && turn===-1 && !gameOver) {
+    setTimeout(cpuMove,450);
+  }
+}
+
+function cpuMove() {
+  let moves=[];
+  for(let r=0;r<8;r++) {
+    for(let c=0;c<8;c++) {
+      let flips=getFlips(r,c,-1);
+      if(flips.length) moves.push({r,c,flips});
+    }
+  }
+  if(!moves.length) return;
+  let level=Number(document.getElementById("level").value);
+  moves.sort((a,b)=>{
+    let score=m=> {
+      let corner=(m.r===0||m.r===7)&&(m.c===0||m.c===7)?100:0;
+      return corner*level + m.flips.length*(level/3);
+    };
+    return score(b)-score(a);
+  });
+  let choice=level===1?moves[Math.floor(Math.random()*moves.length)]:moves[0];
+  place(choice.r,choice.c);
+}
+
+function render() {
+  let html="";
+  let black=0,white=0;
+  for(let r=0;r<8;r++) {
+    for(let c=0;c<8;c++) {
+      let v=board[r][c];
+      if(v===1) black++;
+      if(v===-1) white++;
+      html+=`<button class="cell" onclick="place(${r},${c})">
+        ${v===1?'<span class="stone black"></span>':v===-1?'<span class="stone white"></span>':''}
+      </button>`;
+    }
+  }
+  document.getElementById("board").innerHTML=html;
+  document.getElementById("blackScore").textContent=black;
+  document.getElementById("whiteScore").textContent=white;
+  document.getElementById("turn").textContent=turn===1?"黒の番":"白の番";
+}
+
+function showWinner() {
+  let b=board.flat().filter(x=>x===1).length;
+  let w=board.flat().filter(x=>x===-1).length;
+  document.getElementById("status").textContent=
+    b>w?"黒の勝ち！":w>b?"白の勝ち！":"引き分け！";
+}
+
+function findOpponent() {
+  cpuMode=false;
+  document.getElementById("status").textContent="オンライン対戦機能は次の工程で接続します";
+  document.getElementById("levels").style.display="block";
+}
+
+function startCPU() {
+  cpuMode=true;
+  document.getElementById("levels").style.display="none";
+  document.getElementById("status").textContent="CPU対戦中";
+  resetGame();
+}
+
+resetGame();
+</script>
+</body>
+</html>
