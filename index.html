@@ -4,274 +4,738 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101522">
 <title>Yuniverse3 Othello</title>
 <style>
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  background: #101827;
-  color: white;
-  font-family: Arial, sans-serif;
-  text-align: center;
+:root {
+  --bg:#101522;
+  --panel:#1b2435;
+  --panel2:#253149;
+  --text:#f4f6ff;
+  --muted:#9ba9c0;
+  --accent:#62d9c4;
+  --board:#147d65;
 }
-header {
-  padding: 22px 10px;
-  background: #18263c;
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:Arial,"Noto Sans JP",sans-serif;
 }
-h1 { margin: 0; color: #70c9ff; }
-main {
-  max-width: 500px;
-  margin: auto;
-  padding: 18px;
+header{
+  padding:15px;text-align:center;background:#192337;
+  border-bottom:1px solid #34415a;
 }
-button {
-  border: 0;
-  border-radius: 10px;
-  padding: 13px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
+header h1{margin:0;font-size:23px}
+header small{color:var(--muted)}
+nav{
+  display:flex;gap:7px;overflow-x:auto;padding:10px;
+  background:#151e2d;position:sticky;top:0;z-index:5;
 }
-.primary {
-  width: 100%;
-  background: #2688ed;
-  color: white;
+button,input,select{
+  font:inherit;
 }
-.secondary {
-  background: #34445c;
-  color: white;
+button{
+  border:0;border-radius:9px;padding:11px 14px;
+  background:#34445f;color:white;cursor:pointer;
 }
-#status {
-  margin: 18px 0;
-  padding: 14px;
-  background: #1c2c43;
-  border-radius: 10px;
+button:disabled{opacity:.4}
+button.primary{background:#168d78}
+button.danger{background:#a94050}
+button:active{transform:scale(.97)}
+nav button{white-space:nowrap}
+main{max-width:850px;margin:auto;padding:14px}
+.panel{
+  background:var(--panel);padding:15px;border-radius:14px;
+  margin-bottom:14px;border:1px solid #303d54;
 }
-#board {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: 3px;
-  padding: 5px;
-  background: #123e2c;
-  border-radius: 8px;
-  width: 100%;
-  aspect-ratio: 1;
+h2{font-size:19px;margin:0 0 14px}
+h3{font-size:16px}
+input,select{
+  width:100%;padding:12px;margin:6px 0 12px;
+  background:#101a2a;border:1px solid #465570;
+  color:white;border-radius:8px;
 }
-.cell {
-  background: #218653;
-  border: 0;
-  border-radius: 3px;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+label{color:#c4cee0;font-size:14px}
+.hidden{display:none!important}
+.muted{color:var(--muted);font-size:13px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1}
+.stats{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
 }
-.stone {
-  width: 78%;
-  height: 78%;
-  border-radius: 50%;
-  box-shadow: inset 0 2px 4px #777;
+.stat{
+  background:#111b2b;padding:12px;border-radius:10px;
+  text-align:center;
 }
-.black { background: #111; }
-.white { background: #fff; }
-#scores {
-  display: flex;
-  justify-content: space-around;
-  margin: 15px;
-  font-size: 18px;
+.stat strong{display:block;font-size:22px}
+#board{
+  display:grid;grid-template-columns:repeat(8,1fr);
+  width:min(94vw,480px);aspect-ratio:1;
+  margin:15px auto;background:#0b513f;
+  border:4px solid #0b513f;gap:2px;
 }
-#levels {
-  margin: 15px 0;
+.cell{
+  min-width:0;min-height:0;background:var(--board);
+  display:flex;align-items:center;justify-content:center;
+  padding:0;position:relative;border-radius:0;
 }
-select {
-  padding: 10px;
-  border-radius: 8px;
-  font-size: 16px;
+.cell .stone{
+  width:83%;height:83%;border-radius:50%;
+  box-shadow:inset -3px -4px 6px #0008;
 }
+.black{background:#080b10;border:1px solid #687080}
+.white{background:#f4f4f4;border:1px solid #bbb}
+.cell.legal:after{
+  content:"";width:22%;height:22%;border-radius:50%;
+  background:#b6f7dc99;position:absolute;
+}
+.cell.last{outline:2px solid #ffe47a;outline-offset:-2px}
+.scoreline{text-align:center;font-size:17px;margin:8px}
+.title{
+  display:inline-block;font-weight:bold;padding:4px 9px;
+  border-radius:7px;background:#26344b;
+}
+.title-beginner{color:#b6becb}
+.title-sage{
+  color:#ffdb65;
+  text-shadow:0 0 5px #ffd65b,0 0 12px #ffad28;
+}
+.title-creator{
+  background:linear-gradient(90deg,red,orange,yellow,green,cyan,blue,violet);
+  background-size:300% 100%;background-clip:text;
+  -webkit-background-clip:text;color:transparent;
+  animation:rainbow 3s linear infinite;
+}
+@keyframes rainbow{to{background-position:300% 0}}
+.title-recognized{
+  color:#ff526b;
+  text-shadow:0 0 5px #ff163e,0 0 12px #9e001d;
+}
+.title-streak{
+  color:#c99aff;text-shadow:0 0 8px #a04cff;
+}
+.title-spirit{
+  color:#73caff;text-shadow:0 0 8px #168fff;
+}
+.listitem{
+  padding:12px;background:#111b2b;border-radius:9px;
+  margin:7px 0;
+}
+footer{text-align:center;color:#78869d;padding:20px;font-size:12px}
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Yuniverse3</h1>
-  <p>ONLINE OTHELLO</p>
+  <h1>♟ Yuniverse3 Othello</h1>
+  <small>Think. Play. Win.</small>
 </header>
 
+<nav>
+  <button onclick="showPage('home')">ホーム</button>
+  <button onclick="showPage('game')">CPU対戦</button>
+  <button onclick="showPage('online')">ランダム対戦</button>
+  <button onclick="showPage('friend')">友達対戦</button>
+  <button onclick="showPage('profile')">プロフィール</button>
+  <button onclick="showPage('shop')">ショップ</button>
+  <button onclick="showPage('ranking')">ランキング</button>
+</nav>
+
 <main>
-  <h2>オセロ対戦</h2>
 
-  <div id="status">対戦相手を探してください</div>
+<section id="home" class="page">
+  <div class="panel">
+    <h2>Yuniverse3 Othelloへようこそ</h2>
+    <div id="homeUser">プロフィールを設定してください。</div>
+    <div class="row">
+      <button class="primary" onclick="showPage('game')">CPUと対戦</button>
+      <button onclick="showPage('online')">ランダム対戦</button>
+    </div>
+  </div>
+  <div class="panel">
+    <h2>プロフィール設定</h2>
+    <label>プレイヤー名（10文字以内）</label>
+    <input id="nameInput" maxlength="10" placeholder="名前">
+    <label>国・地域</label>
+    <select id="countryInput">
+      <option value="日本">日本</option>
+      <option value="アメリカ">アメリカ</option>
+      <option value="中国">中国</option>
+      <option value="韓国">韓国</option>
+      <option value="イギリス">イギリス</option>
+      <option value="その他">その他</option>
+    </select>
+    <label>言語</label>
+    <select id="languageInput">
+      <option value="ja">日本語</option>
+      <option value="en">English</option>
+      <option value="zh">中文</option>
+    </select>
+    <button class="primary" onclick="saveProfile()">保存する</button>
+    <p class="muted">現在のプロフィール保存はこの端末内です。</p>
+  </div>
+  <div class="panel">
+    <h2>現在の所持ユニ</h2>
+    <strong id="homeYun">0 ユニ</strong>
+  </div>
+</section>
 
-  <button class="primary" onclick="findOpponent()">
-    ランダム対戦
-  </button>
-
-  <div id="levels" style="display:none">
-    <h3>相手がいません</h3>
-    <p>コンピューターと対戦しますか？</p>
-    <label>CPUの強さ：</label>
-    <select id="level">
-      <option value="1">レベル1</option>
+<section id="game" class="page hidden">
+  <div class="panel">
+    <h2>CPU対戦</h2>
+    <label>CPUレベル</label>
+    <select id="cpuLevel">
+      <option value="1">レベル1 - とても弱い</option>
       <option value="2">レベル2</option>
       <option value="3">レベル3</option>
       <option value="4">レベル4</option>
       <option value="5">レベル5</option>
       <option value="6">レベル6</option>
       <option value="7">レベル7</option>
-      <option value="8">レベル8</option>
+      <option value="8" selected>レベル8 - 普通</option>
       <option value="9">レベル9</option>
       <option value="10">レベル10</option>
       <option value="11">レベル11</option>
       <option value="12">レベル12</option>
       <option value="13">レベル13</option>
       <option value="14">レベル14</option>
-      <option value="15">レベル15</option>
+      <option value="15">レベル15 - とても強い</option>
     </select>
-    <br><br>
-    <button class="primary" onclick="startCPU()">
-      この強さで対戦
-    </button>
+    <button class="primary" onclick="newGame()">対局開始</button>
+    <button onclick="passTurn()">パス</button>
+    <button class="danger" onclick="resign()">投了</button>
   </div>
-
-  <div id="scores">
-    <span>黒：<b id="blackScore">2</b></span>
-    <span>白：<b id="whiteScore">2</b></span>
+  <div class="panel">
+    <div class="scoreline" id="turn">対局を開始してください</div>
+    <div class="scoreline" id="timer">02:30</div>
+    <div class="scoreline" id="score">黒 2 - 2 白</div>
+    <div id="board"></div>
+    <div class="scoreline" id="gameMessage"></div>
   </div>
+</section>
 
-  <div id="board"></div>
+<section id="online" class="page hidden">
+  <div class="panel">
+    <h2>ランダムオンライン対戦</h2>
+    <p>オンラインの対戦相手を検索します。</p>
+    <button class="primary" onclick="searchOpponent()">対戦相手を検索</button>
+    <p id="searchStatus" class="muted"></p>
+    <p class="muted">
+      Firebase接続前のため、現在は実際のオンラインマッチングは利用できません。
+    </p>
+  </div>
+</section>
 
-  <p id="turn">黒の番</p>
+<section id="friend" class="page hidden">
+  <div class="panel">
+    <h2>友達対戦</h2>
+    <button class="primary" onclick="createRoom()">ルームを作成</button>
+    <p id="roomDisplay"></p>
+    <label>ルームコード</label>
+    <input id="roomInput" maxlength="7" placeholder="例：123456A">
+    <button onclick="joinRoom()">ルームに参加</button>
+    <p class="muted">オンライン接続はFirebase設定後に実装します。</p>
+  </div>
+</section>
 
-  <button class="secondary" onclick="resetGame()">
-    やり直す
-  </button>
+<section id="profile" class="page hidden">
+  <div class="panel">
+    <h2>プロフィール</h2>
+    <h3 id="profileName">未設定</h3>
+    <p id="profileCountry"></p>
+    <p>称号：<span id="profileTitle" class="title title-beginner">初心者</span></p>
+    <div class="stats">
+      <div class="stat">勝利<strong id="wins">0</strong></div>
+      <div class="stat">敗北<strong id="losses">0</strong></div>
+      <div class="stat">引分<strong id="draws">0</strong></div>
+    </div>
+    <div class="stats" style="margin-top:8px">
+      <div class="stat">勝率<strong id="winrate">0%</strong></div>
+      <div class="stat">レート<strong id="rating">1000</strong></div>
+      <div class="stat">ユニ<strong id="yun">0</strong></div>
+    </div>
+  </div>
+  <div class="panel">
+    <h2>対戦履歴</h2>
+    <div id="history">まだ対戦履歴がありません。</div>
+  </div>
+</section>
+
+<section id="shop" class="page hidden">
+  <div class="panel">
+    <h2>ショップ</h2>
+    <p>所持ユニ：<strong id="shopYun">0</strong></p>
+    <div class="listitem">
+      <h3>オリジナル駒スキン</h3>
+      <p>自分だけの駒を使おう。</p>
+      <p>価格：2500ユニ</p>
+      <button class="primary" onclick="buySkin()">購入する</button>
+    </div>
+  </div>
+  <div class="panel">
+    <h2>バックパック</h2>
+    <div id="inventory">所持アイテムなし</div>
+  </div>
+</section>
+
+<section id="ranking" class="page hidden">
+  <div class="panel">
+    <h2>ランキング</h2>
+    <p class="muted">現在はこの端末内のプロフィールのみを表示します。</p>
+    <div id="rankingList"></div>
+  </div>
+</section>
+
 </main>
 
-<script>
-let board = [];
-let turn = 1;
-let gameOver = false;
-let cpuMode = false;
+<footer>Yuniverse3 Othello © 2026</footer>
 
-function resetGame() {
-  board = Array.from({length:8},()=>Array(8).fill(0));
-  board[3][3] = -1;
-  board[3][4] = 1;
-  board[4][3] = 1;
-  board[4][4] = -1;
-  turn = 1;
-  gameOver = false;
-  render();
+<script>
+"use strict";
+
+const STORAGE_KEY = "yuniverse3_othello_v1";
+
+const defaults = {
+  name:"",
+  country:"日本",
+  language:"ja",
+  yun:0,
+  wins:0,
+  losses:0,
+  draws:0,
+  rating:1000,
+  title:"初心者",
+  history:[],
+  inventory:[],
+  ownedSkins:[],
+  equippedSkin:"default"
+};
+
+let data = loadData();
+
+function loadData(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
+    return {...defaults,...saved};
+  }catch(e){return {...defaults};}
 }
 
-function getFlips(r,c,p) {
-  if(board[r][c] !== 0) return [];
-  let flips = [];
-  for(let dr=-1;dr<=1;dr++) {
-    for(let dc=-1;dc<=1;dc++) {
-      if(!dr && !dc) continue;
-      let line=[];
-      let y=r+dr, x=c+dc;
-      while(y>=0 && y<8 && x>=0 && x<8 && board[y][x]===-p) {
-        line.push([y,x]);
-        y+=dr; x+=dc;
-      }
-      if(line.length && y>=0 && y<8 && x>=0 && x<8 && board[y][x]===p) {
-        flips.push(...line);
-      }
+function saveData(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+  refreshUI();
+}
+
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+  document.getElementById(id).classList.remove("hidden");
+  refreshUI();
+}
+
+function saveProfile(){
+  const name=document.getElementById("nameInput").value.trim();
+  if(!name){alert("名前を入力してください。");return;}
+  if([...name].length>10){alert("名前は10文字以内です。");return;}
+  data.name=name;
+  data.country=document.getElementById("countryInput").value;
+  data.language=document.getElementById("languageInput").value;
+  saveData();
+  alert("プロフィールを保存しました。");
+}
+
+function titleClass(title){
+  return {
+    "初心者":"title-beginner",
+    "最初の賢者":"title-sage",
+    "創造者":"title-creator",
+    "認められた者":"title-recognized",
+    "連勝の覇者":"title-streak",
+    "不屈の精神":"title-spirit"
+  }[title]||"title-beginner";
+}
+
+function refreshUI(){
+  const title=data.title||"初心者";
+  document.getElementById("homeUser").textContent=
+    data.name ? data.name+" さん / "+data.country : "プロフィールを設定してください。";
+  document.getElementById("homeYun").textContent=data.yun+" ユニ";
+  document.getElementById("profileName").textContent=data.name||"未設定";
+  document.getElementById("profileCountry").textContent=data.country;
+  const badge=document.getElementById("profileTitle");
+  badge.textContent=title;
+  badge.className="title "+titleClass(title);
+  document.getElementById("wins").textContent=data.wins;
+  document.getElementById("losses").textContent=data.losses;
+  document.getElementById("draws").textContent=data.draws;
+  const total=data.wins+data.losses+data.draws;
+  document.getElementById("winrate").textContent=
+    total?Math.round(data.wins/total*100)+"%":"0%";
+  document.getElementById("rating").textContent=data.rating;
+  document.getElementById("yun").textContent=data.yun;
+  document.getElementById("shopYun").textContent=data.yun;
+
+  document.getElementById("history").innerHTML=data.history.length
+    ? data.history.slice(0,20).map(h=>
+      `<div class="listitem">${escapeHTML(h.result)} / ${escapeHTML(h.date)}</div>`
+    ).join("")
+    : "まだ対戦履歴がありません。";
+
+  document.getElementById("inventory").innerHTML=
+    data.inventory.length
+    ?data.inventory.map(x=>`<div class="listitem">${escapeHTML(x)}</div>`).join("")
+    :"所持アイテムなし";
+
+  document.getElementById("rankingList").innerHTML=
+    `<div class="listitem">1位：${escapeHTML(data.name||"プレイヤー")} / レート ${data.rating}</div>`;
+
+  if(document.getElementById("nameInput").value===""){
+    document.getElementById("nameInput").value=data.name;
+    document.getElementById("countryInput").value=data.country;
+    document.getElementById("languageInput").value=data.language;
+  }
+}
+
+function escapeHTML(s){
+  return String(s).replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+/* オセロ本体 */
+
+const EMPTY=0, BLACK=1, WHITE=2;
+const directions=[
+  [-1,-1],[-1,0],[-1,1],
+  [0,-1],[0,1],
+  [1,-1],[1,0],[1,1]
+];
+
+let board=[];
+let current=BLACK;
+let running=false;
+let busy=false;
+let lastMove=null;
+let seconds=150;
+let timerHandle=null;
+let cpuLevel=8;
+let moves=0;
+
+function initialBoard(){
+  const b=Array.from({length:8},()=>Array(8).fill(EMPTY));
+  b[3][3]=WHITE;b[3][4]=BLACK;
+  b[4][3]=BLACK;b[4][4]=WHITE;
+  return b;
+}
+
+function opponent(color){
+  return color===BLACK?WHITE:BLACK;
+}
+
+function validMoves(b,color){
+  const result=[];
+  for(let r=0;r<8;r++){
+    for(let c=0;c<8;c++){
+      if(b[r][c]!==EMPTY)continue;
+      if(getFlips(b,r,c,color).length)result.push([r,c]);
+    }
+  }
+  return result;
+}
+
+function getFlips(b,r,c,color){
+  if(r<0||r>7||c<0||c>7||b[r][c]!==EMPTY)return [];
+  let flips=[];
+  for(const [dr,dc] of directions){
+    let rr=r+dr,cc=c+dc,line=[];
+    while(rr>=0&&rr<8&&cc>=0&&cc<8&&b[rr][cc]===opponent(color)){
+      line.push([rr,cc]);
+      rr+=dr;cc+=dc;
+    }
+    if(line.length&&rr>=0&&rr<8&&cc>=0&&cc<8&&b[rr][cc]===color){
+      flips.push(...line);
     }
   }
   return flips;
 }
 
-function hasMove(p) {
-  for(let r=0;r<8;r++)
-    for(let c=0;c<8;c++)
-      if(getFlips(r,c,p).length) return true;
-  return false;
+function place(b,r,c,color){
+  const flips=getFlips(b,r,c,color);
+  if(!flips.length)return false;
+  b[r][c]=color;
+  flips.forEach(([rr,cc])=>b[rr][cc]=color);
+  return true;
 }
 
-function place(r,c) {
-  if(gameOver || !getFlips(r,c,turn).length) return;
-  let flips=getFlips(r,c,turn);
-  board[r][c]=turn;
-  flips.forEach(([y,x])=>board[y][x]=turn);
-  turn=-turn;
+function newGame(){
+  if(!data.name){
+    alert("先にプロフィールを設定してください。");
+    showPage("home");
+    return;
+  }
+  clearInterval(timerHandle);
+  board=initialBoard();
+  current=BLACK;
+  lastMove=null;
+  moves=0;
+  running=true;
+  busy=false;
+  seconds=150;
+  cpuLevel=Number(document.getElementById("cpuLevel").value);
+  document.getElementById("gameMessage").textContent="";
+  renderBoard();
+  updateScore();
+  updateTurn();
+  timerHandle=setInterval(()=>{
+    if(!running)return;
+    seconds--;
+    updateTimer();
+    if(seconds<=0){
+      finishGame("時間切れ");
+    }
+  },1000);
+}
 
-  if(!hasMove(turn)) {
-    turn=-turn;
-    if(!hasMove(turn)) {
-      gameOver=true;
-      showWinner();
+function renderBoard(){
+  const root=document.getElementById("board");
+  root.innerHTML="";
+  const legal=running&&!busy&&current===BLACK
+    ?validMoves(board,BLACK):[];
+  for(let r=0;r<8;r++){
+    for(let c=0;c<8;c++){
+      const cell=document.createElement("button");
+      cell.className="cell";
+      const isLegal=legal.some(([x,y])=>x===r&&y===c);
+      if(isLegal)cell.classList.add("legal");
+      if(lastMove&&lastMove[0]===r&&lastMove[1]===c)
+        cell.classList.add("last");
+      if(board[r][c]!==EMPTY){
+        const stone=document.createElement("div");
+        stone.className="stone "+(board[r][c]===BLACK?"black":"white");
+        cell.appendChild(stone);
+      }
+      cell.disabled=!isLegal;
+      cell.onclick=()=>humanMove(r,c);
+      root.appendChild(cell);
     }
   }
-  render();
-  if(cpuMode && turn===-1 && !gameOver) {
-    setTimeout(cpuMove,450);
+}
+
+function humanMove(r,c){
+  if(!running||busy||current!==BLACK)return;
+  if(!place(board,r,c,BLACK))return;
+  lastMove=[r,c];
+  moves++;
+  afterMove();
+}
+
+function afterMove(){
+  renderBoard();
+  updateScore();
+  if(!running)return;
+  const other=opponent(current);
+  if(validMoves(board,other).length){
+    current=other;
+  }else if(validMoves(board,current).length){
+    document.getElementById("gameMessage").textContent=
+      (current===BLACK?"白":"黒")+"は置ける場所がないためパスします。";
+  }else{
+    finishGame("対局終了");
+    return;
+  }
+  updateTurn();
+  renderBoard();
+  if(current===WHITE){
+    busy=true;
+    renderBoard();
+    setTimeout(cpuMove,500);
   }
 }
 
-function cpuMove() {
-  let moves=[];
-  for(let r=0;r<8;r++) {
-    for(let c=0;c<8;c++) {
-      let flips=getFlips(r,c,-1);
-      if(flips.length) moves.push({r,c,flips});
+function cpuMove(){
+  if(!running)return;
+  const movesList=validMoves(board,WHITE);
+  if(!movesList.length){
+    current=BLACK;
+    busy=false;
+    updateTurn();
+    renderBoard();
+    if(!validMoves(board,BLACK).length)finishGame("対局終了");
+    return;
+  }
+  const move=chooseCPU(board,WHITE,cpuLevel);
+  place(board,move[0],move[1],WHITE);
+  lastMove=move;
+  moves++;
+  busy=false;
+  current=BLACK;
+  updateScore();
+  updateTurn();
+  renderBoard();
+  if(!validMoves(board,BLACK).length){
+    if(!validMoves(board,WHITE).length)finishGame("対局終了");
+    else{
+      document.getElementById("gameMessage").textContent=
+        "黒は置ける場所がないためパスします。";
+      current=WHITE;
+      busy=true;
+      setTimeout(cpuMove,500);
     }
   }
-  if(!moves.length) return;
-  let level=Number(document.getElementById("level").value);
-  moves.sort((a,b)=>{
-    let score=m=> {
-      let corner=(m.r===0||m.r===7)&&(m.c===0||m.c===7)?100:0;
-      return corner*level + m.flips.length*(level/3);
-    };
-    return score(b)-score(a);
-  });
-  let choice=level===1?moves[Math.floor(Math.random()*moves.length)]:moves[0];
-  place(choice.r,choice.c);
 }
 
-function render() {
-  let html="";
+function chooseCPU(b,color,level){
+  const list=validMoves(b,color);
+  let best=list[0],bestScore=-Infinity;
+  const depth=level>=13?4:level>=9?3:level>=5?2:1;
+  for(const move of list){
+    const copy=cloneBoard(b);
+    place(copy,move[0],move[1],color);
+    let score=evaluate(copy,color);
+    if(level>=3)score+=Math.random()*Math.max(1,17-level);
+    if(level>=9){
+      score+=search(copy,opponent(color),depth-1,color);
+    }
+    if(score>bestScore){bestScore=score;best=move;}
+  }
+  return best;
+}
+
+function cloneBoard(b){return b.map(row=>row.slice());}
+
+function evaluate(b,color){
+  const weights=[
+    [100,-25,10,5,5,10,-25,100],
+    [-25,-45,-5,-5,-5,-5,-45,-25],
+    [10,-5,8,3,3,8,-5,10],
+    [5,-5,3,2,2,3,-5,5],
+    [5,-5,3,2,2,3,-5,5],
+    [10,-5,8,3,3,8,-5,10],
+    [-25,-45,-5,-5,-5,-5,-45,-25],
+    [100,-25,10,5,5,10,-25,100]
+  ];
+  let score=0;
+  for(let r=0;r<8;r++)for(let c=0;c<8;c++){
+    if(b[r][c]===color)score+=weights[r][c];
+    else if(b[r][c]===opponent(color))score-=weights[r][c];
+  }
+  const mine=validMoves(b,color).length;
+  const theirs=validMoves(b,opponent(color)).length;
+  score+=(mine-theirs)*(moves<40?5:2);
+  let count=0;
+  for(const row of b)for(const x of row)if(x!==EMPTY)count++;
+  if(count>48){
+    let stones=0;
+    for(const row of b)for(const x of row)
+      stones+=x===color?1:x===opponent(color)?-1:0;
+    score+=stones*2;
+  }
+  return score;
+}
+
+function search(b,color,depth,root){
+  if(depth<=0)return evaluate(b,root);
+  const list=validMoves(b,color);
+  if(!list.length)return -search(b,opponent(color),depth-1,root);
+  let scores=[];
+  for(const move of list){
+    const copy=cloneBoard(b);
+    place(copy,move[0],move[1],color);
+    scores.push(search(copy,opponent(color),depth-1,root));
+  }
+  return color===root?Math.max(...scores):Math.min(...scores);
+}
+
+function updateScore(){
   let black=0,white=0;
-  for(let r=0;r<8;r++) {
-    for(let c=0;c<8;c++) {
-      let v=board[r][c];
-      if(v===1) black++;
-      if(v===-1) white++;
-      html+=`<button class="cell" onclick="place(${r},${c})">
-        ${v===1?'<span class="stone black"></span>':v===-1?'<span class="stone white"></span>':''}
-      </button>`;
-    }
+  for(const row of board)for(const x of row){
+    if(x===BLACK)black++;
+    if(x===WHITE)white++;
   }
-  document.getElementById("board").innerHTML=html;
-  document.getElementById("blackScore").textContent=black;
-  document.getElementById("whiteScore").textContent=white;
-  document.getElementById("turn").textContent=turn===1?"黒の番":"白の番";
+  document.getElementById("score").textContent=
+    `黒 ${black} - ${white} 白`;
 }
 
-function showWinner() {
-  let b=board.flat().filter(x=>x===1).length;
-  let w=board.flat().filter(x=>x===-1).length;
-  document.getElementById("status").textContent=
-    b>w?"黒の勝ち！":w>b?"白の勝ち！":"引き分け！";
+function updateTurn(){
+  document.getElementById("turn").textContent=
+    !running?"対局終了":
+    current===BLACK?"あなたの番（黒）":"CPUの番（白）";
 }
 
-function findOpponent() {
-  cpuMode=false;
-  document.getElementById("status").textContent="オンライン対戦機能は次の工程で接続します";
-  document.getElementById("levels").style.display="block";
+function updateTimer(){
+  const m=Math.floor(seconds/60);
+  const s=seconds%60;
+  document.getElementById("timer").textContent=
+    String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
 }
 
-function startCPU() {
-  cpuMode=true;
-  document.getElementById("levels").style.display="none";
-  document.getElementById("status").textContent="CPU対戦中";
-  resetGame();
+function passTurn(){
+  if(!running||busy||current!==BLACK)return;
+  if(validMoves(board,BLACK).length){
+    alert("置ける場所があります。パスできません。");
+    return;
+  }
+  current=WHITE;
+  busy=true;
+  updateTurn();
+  setTimeout(cpuMove,500);
 }
 
-resetGame();
-</script>
-</body>
-</html>
+function resign(){
+  if(!running)return;
+  if(confirm("投了しますか？"))finishGame("投了");
+}
+
+function finishGame(reason){
+  if(!running)return;
+  running=false;
+  clearInterval(timerHandle);
+  let black=0,white=0;
+  for(const row of board)for(const x of row){
+    if(x===BLACK)black++;
+    if(x===WHITE)white++;
+  }
+  let result="引き分け";
+  if(reason==="投了"||reason==="時間切れ"){
+    result=reason==="投了"?"敗北":"時間切れ";
+    if(reason==="時間切れ"&&black>white)result="勝利";
+    if(reason==="時間切れ"&&black===white)result="引き分け";
+  }else if(black>white)result="勝利";
+  else if(black<white)result="敗北";
+
+  if(result==="勝利"){
+    data.wins++;
+    data.yun+=100;
+    data.rating+=20;
+    if(white===0){
+      data.yun+=500;
+      document.getElementById("gameMessage").textContent=
+        "完全勝利！100ユニ＋追加500ユニ！";
+    }
+  }else if(result==="敗北"){
+    data.losses++;
+    data.rating=Math.max(0,data.rating-15);
+  }else{
+    data.draws++;
+    data.yun+=50;
+  }
+
+  data.history.unshift({
+    result:result+"（"+black+"対"+white+"）",
+    date:new Date().toLocaleString()
+  });
+
+  if(data.wins>=10&&data.title==="初心者")
+    data.title="不屈の精神";
+
+  saveData();
+  document.getElementById("gameMessage").textContent=
+    `${reason}：${result}！ 黒 ${black} - ${white} 白`;
+  updateTurn();
+  renderBoard();
+}
+
+function searchOpponent(){
+  const status=document.getElementById("searchStatus");
+  status.textContent="対戦相手を検索しています...";
+  setTimeout(()=>{
+    status.textContent=
+      "相手が見つかりませんでした
