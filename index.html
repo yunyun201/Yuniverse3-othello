@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -34,32 +35,14 @@ label{color:#c4cee0;font-size:14px}
 .stat strong{display:block;font-size:22px}
 #board{display:grid;grid-template-columns:repeat(8,1fr);width:min(94vw,480px);aspect-ratio:1;margin:15px auto;background:#0b513f;border:4px solid #0b513f;gap:2px}
 .cell{min-width:0;min-height:0;background:var(--board);display:flex;align-items:center;justify-content:center;padding:0;position:relative;border-radius:0}
-.cell .stone{width:83%;height:83%;border-radius:50%;box-shadow:inset -3px -4px 6px #0008}
+.cell .stone{width:83%;height:83%;border-radius:50%;box-shadow:inset -3px -4px 6px #0008;pointer-events:none}
 .black{background:#080b10;border:1px solid #687080}
 .white{background:#f4f4f4;border:1px solid #bbb}
-
-/* 駒スキン */
-.stone.skin-gold{
- background:linear-gradient(135deg,#fff2a3,#d99b18 45%,#fff0a0 70%,#9d6500);
- border:2px solid #ffe49a;
- box-shadow:inset -3px -4px 7px #71470099,0 0 7px #ffc83d88;
-}
-.stone.skin-ruby{
- background:linear-gradient(135deg,#ff9aaa,#c50035 45%,#ff526d 70%,#68001d);
- border:2px solid #ff9aaf;
- box-shadow:inset -3px -4px 7px #51001999,0 0 8px #ff315d99;
-}
-.stone.skin-diamond{
- background:linear-gradient(135deg,#fff,#8eeaff 45%,#d8faff 70%,#679fc9);
- border:2px solid #e4fbff;
- box-shadow:inset -3px -4px 7px #326b8c99,0 0 9px #83eaff99;
-}
-.stone.skin-original{
- background:linear-gradient(135deg,#ff5b8d,#a46bff 35%,#39d9d0 65%,#ffe36d);
- border:2px solid #fff;
- box-shadow:inset -3px -4px 7px #39215c99,0 0 10px #d28cff;
-}
-.cell.legal:after{content:"";width:22%;height:22%;border-radius:50%;background:#b6f7dc99;position:absolute}
+.stone.skin-gold{background:linear-gradient(135deg,#fff2a3,#d99b18 45%,#fff0a0 70%,#9d6500);border:2px solid #ffe49a;box-shadow:inset -3px -4px 7px #71470099,0 0 7px #ffc83d88}
+.stone.skin-ruby{background:linear-gradient(135deg,#ff9aaa,#c50035 45%,#ff526d 70%,#68001d);border:2px solid #ff9aaf;box-shadow:inset -3px -4px 7px #51001999,0 0 8px #ff315d99}
+.stone.skin-diamond{background:linear-gradient(135deg,#fff,#8eeaff 45%,#d8faff 70%,#679fc9);border:2px solid #e4fbff;box-shadow:inset -3px -4px 7px #326b8c99,0 0 9px #83eaff99}
+.stone.skin-original{background:linear-gradient(135deg,#ff5b8d,#a46bff 35%,#39d9d0 65%,#ffe36d);border:2px solid #fff;box-shadow:inset -3px -4px 7px #39215c99,0 0 10px #d28cff}
+.cell.legal:after{content:"";width:22%;height:22%;border-radius:50%;background:#b6f7dc99;position:absolute;pointer-events:none}
 .cell.last{outline:2px solid #ffe47a;outline-offset:-2px}
 .scoreline{text-align:center;font-size:17px;margin:8px}
 .title{display:inline-block;font-weight:bold;padding:4px 9px;border-radius:7px;background:#26344b}
@@ -86,6 +69,7 @@ footer{text-align:center;color:#78869d;padding:20px;font-size:12px}
 <h1>♟ Yuniverse3 Othello</h1>
 <small>Think. Play. Win.</small>
 </header>
+
 <nav>
 <button onclick="showPage('home')">ホーム</button>
 <button onclick="showPage('game')">CPU対戦</button>
@@ -95,6 +79,7 @@ footer{text-align:center;color:#78869d;padding:20px;font-size:12px}
 <button onclick="showPage('shop')">ショップ</button>
 <button onclick="showPage('ranking')">ランキング</button>
 </nav>
+
 <main>
 <section id="home" class="page">
 <div class="panel">
@@ -105,6 +90,7 @@ footer{text-align:center;color:#78869d;padding:20px;font-size:12px}
 <button onclick="showPage('online')">ランダム対戦</button>
 </div>
 </div>
+
 <div class="panel">
 <h2>プロフィール設定</h2>
 <label>プレイヤー名（10文字以内）</label>
@@ -127,6 +113,7 @@ footer{text-align:center;color:#78869d;padding:20px;font-size:12px}
 <button class="primary" onclick="saveProfile()">保存する</button>
 <p class="muted">プロフィールはこの端末内に保存されます。</p>
 </div>
+
 <div class="panel">
 <h2>現在の所持ユニ</h2>
 <strong id="homeYun">0 ユニ</strong>
@@ -158,10 +145,12 @@ footer{text-align:center;color:#78869d;padding:20px;font-size:12px}
 <button onclick="passTurn()">パス</button>
 <button class="danger" onclick="resign()">投了</button>
 </div>
+
 <div class="panel">
 <div class="scoreline" id="turn">対局を開始してください</div>
 <div class="scoreline" id="timer">02:30</div>
 <div class="scoreline" id="score">黒 2 - 2 白</div>
+<div class="scoreline" id="colorInfo"></div>
 <div id="board"></div>
 <div class="scoreline" id="gameMessage"></div>
 </div>
@@ -173,7 +162,7 @@ footer{text-align:center;color:#78869d;padding:20px;font-size:12px}
 <p>オンラインの対戦相手を検索します。</p>
 <button class="primary" onclick="searchOpponent()">対戦相手を検索</button>
 <p id="searchStatus" class="muted"></p>
-<p class="muted">Firebase接続前のため、オンライン対戦はまだ利用できません。</p>
+<p class="muted">オンライン接続はまだ実装されていません。</p>
 </div>
 </section>
 
@@ -185,7 +174,7 @@ footer{text-align:center;color:#78869d;padding:20px;font-size:12px}
 <label>ルームコード</label>
 <input id="roomInput" maxlength="7" placeholder="例：123456A">
 <button onclick="joinRoom()">ルームに参加</button>
-<p class="muted">オンライン接続はFirebase設定後に実装します。</p>
+<p class="muted">現在はルームコードの表示のみ利用できます。オンライン接続は未実装です。</p>
 </div>
 </section>
 
@@ -234,6 +223,7 @@ footer{text-align:center;color:#78869d;padding:20px;font-size:12px}
 </div>
 </section>
 </main>
+
 <footer>Yuniverse3 Othello © 2026</footer>
 
 <script>
@@ -242,277 +232,174 @@ footer{text-align:center;color:#78869d;padding:20px;font-size:12px}
 const STORAGE_KEY="yuniverse3_othello_v1";
 
 const SKINS=[
- {id:"default",name:"通常の駒",price:0,description:"最初から使える標準デザイン。",className:""},
- {id:"gold",name:"金色の駒",price:500,description:"金色に輝く豪華な駒。",className:"skin-gold"},
- {id:"ruby",name:"ルビーの駒",price:1000,description:"赤く輝くルビーのような駒。",className:"skin-ruby"},
- {id:"diamond",name:"ダイヤの駒",price:1500,description:"透明感のある青白い駒。",className:"skin-diamond"},
- {id:"original",name:"オリジナル駒スキン",price:2500,description:"カラフルに輝く特別な駒。",className:"skin-original"}
+{id:"default",name:"通常の駒",price:0,description:"最初から使える標準デザイン。",className:""},
+{id:"gold",name:"金色の駒",price:500,description:"金色に輝く豪華な駒。",className:"skin-gold"},
+{id:"ruby",name:"ルビーの駒",price:1000,description:"赤く輝くルビーのような駒。",className:"skin-ruby"},
+{id:"diamond",name:"ダイヤの駒",price:1500,description:"透明感のある青白い駒。",className:"skin-diamond"},
+{id:"original",name:"オリジナル駒スキン",price:2500,description:"カラフルに輝く特別な駒。",className:"skin-original"}
 ];
 
 const defaults={
- name:"",
- country:"日本",
- language:"ja",
- yun:0,
- wins:0,
- losses:0,
- draws:0,
- rating:1000,
- title:"初心者",
- history:[],
- inventory:[],
- ownedSkins:["default"],
- equippedSkin:"default"
+name:"",country:"日本",language:"ja",yun:0,
+wins:0,losses:0,draws:0,rating:1000,title:"初心者",
+history:[],inventory:[],ownedSkins:["default"],equippedSkin:"default"
 };
 
 let data=loadData();
 
 function loadData(){
- try{
-  const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
-  const result={...defaults,...saved};
-
-  if(!Array.isArray(result.ownedSkins))result.ownedSkins=["default"];
-  if(!Array.isArray(result.inventory))result.inventory=[];
-  if(!Array.isArray(result.history))result.history=[];
-
-  if(!result.ownedSkins.includes("default")){
-   result.ownedSkins.unshift("default");
-  }
-
-  if(!SKINS.some(s=>s.id===result.equippedSkin)){
-   result.equippedSkin="default";
-  }
-
-  if(!result.ownedSkins.includes(result.equippedSkin)){
-   result.equippedSkin="default";
-  }
-
-  return result;
- }catch(e){
-  return {...defaults};
- }
+try{
+const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
+const result={...defaults,...saved};
+if(!Array.isArray(result.ownedSkins))result.ownedSkins=["default"];
+if(!Array.isArray(result.inventory))result.inventory=[];
+if(!Array.isArray(result.history))result.history=[];
+if(!result.ownedSkins.includes("default"))result.ownedSkins.unshift("default");
+if(!SKINS.some(s=>s.id===result.equippedSkin))result.equippedSkin="default";
+if(!result.ownedSkins.includes(result.equippedSkin))result.equippedSkin="default";
+return result;
+}catch(e){return {...defaults};}
 }
 
 function saveData(){
- try{
-  localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
- }catch(e){
-  alert("保存できませんでした。ブラウザの設定を確認してください。");
- }
- refreshUI();
+try{
+localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+}catch(e){
+alert("保存できませんでした。ブラウザの設定を確認してください。");
+}
+refreshUI();
 }
 
 function showPage(id){
- document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
- document.getElementById(id).classList.remove("hidden");
- refreshUI();
+document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+document.getElementById(id).classList.remove("hidden");
+refreshUI();
 }
 
 function saveProfile(){
- const name=document.getElementById("nameInput").value.trim();
-
- if(!name){
-  alert("名前を入力してください。");
-  return;
- }
-
- if([...name].length>10){
-  alert("名前は10文字以内です。");
-  return;
- }
-
- data.name=name;
- data.country=document.getElementById("countryInput").value;
- data.language=document.getElementById("languageInput").value;
-
- saveData();
- alert("プロフィールを保存しました。");
+const name=document.getElementById("nameInput").value.trim();
+if(!name){alert("名前を入力してください。");return;}
+if([...name].length>10){alert("名前は10文字以内です。");return;}
+data.name=name;
+data.country=document.getElementById("countryInput").value;
+data.language=document.getElementById("languageInput").value;
+saveData();
+alert("プロフィールを保存しました。");
 }
 
 function titleClass(title){
- return {
-  "初心者":"title-beginner",
-  "最初の賢者":"title-sage",
-  "創造者":"title-creator",
-  "認められた者":"title-recognized",
-  "連勝の覇者":"title-streak",
-  "不屈の精神":"title-spirit"
- }[title]||"title-beginner";
+return {
+"初心者":"title-beginner",
+"最初の賢者":"title-sage",
+"創造者":"title-creator",
+"認められた者":"title-recognized",
+"連勝の覇者":"title-streak",
+"不屈の精神":"title-spirit"
+}[title]||"title-beginner";
 }
 
 function escapeHTML(s){
- return String(s).replace(/[&<>"']/g,c=>({
-  "&":"&amp;",
-  "<":"&lt;",
-  ">":"&gt;",
-  '"':"&quot;",
-  "'":"&#39;"
- }[c]));
+return String(s).replace(/[&<>"']/g,c=>({
+"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[c]));
 }
 
-function getSkin(id){
- return SKINS.find(s=>s.id===id)||SKINS[0];
-}
+function getSkin(id){return SKINS.find(s=>s.id===id)||SKINS[0];}
 
 function renderShop(){
- const root=document.getElementById("shopItems");
- if(!root)return;
-
- root.innerHTML=SKINS.map(skin=>{
-  const owned=data.ownedSkins.includes(skin.id);
-  const equipped=data.equippedSkin===skin.id;
-
-  let buttonText="";
-  let buttonAction="";
-  let buttonClass="";
-
-  if(equipped){
-   buttonText="装備中";
-   buttonAction="";
-   buttonClass="";
-  }else if(owned){
-   buttonText="装備する";
-   buttonAction=`equipSkin('${skin.id}')`;
-   buttonClass="primary";
-  }else{
-   buttonText=skin.price===0?"無料で入手":`購入する（${skin.price}ユニ）`;
-   buttonAction=`buySkin('${skin.id}')`;
-   buttonClass="primary";
-  }
-
-  return `
-   <div class="shop-item">
-    <h3>${escapeHTML(skin.name)}</h3>
-    <p class="muted">${escapeHTML(skin.description)}</p>
-    <div class="shop-preview ${skin.className}" style="${skin.id==="default"?"background:linear-gradient(135deg,#080b10 50%,#f4f4f4 50%);border:2px solid #999;":""}"></div>
-    <p>価格：${skin.price===0?"無料":skin.price.toLocaleString()+"ユニ"}</p>
-    <div class="shop-actions">
-     <button class="${buttonClass}" ${buttonAction?`onclick="${buttonAction}"`:"disabled"}>${buttonText}</button>
-    </div>
-   </div>
-  `;
- }).join("");
+const root=document.getElementById("shopItems");
+if(!root)return;
+root.innerHTML=SKINS.map(skin=>{
+const owned=data.ownedSkins.includes(skin.id);
+const equipped=data.equippedSkin===skin.id;
+let text="",action="",cls="";
+if(equipped){text="装備中";}
+else if(owned){text="装備する";action=`equipSkin('${skin.id}')`;cls="primary";}
+else{text=skin.price===0?"無料で入手":`購入する（${skin.price}ユニ）`;action=`buySkin('${skin.id}')`;cls="primary";}
+return `<div class="shop-item">
+<h3>${escapeHTML(skin.name)}</h3>
+<p class="muted">${escapeHTML(skin.description)}</p>
+<div class="shop-preview ${skin.className}" style="${skin.id==="default"?"background:linear-gradient(135deg,#080b10 50%,#f4f4f4 50%);border:2px solid #999;":""}"></div>
+<p>価格：${skin.price===0?"無料":skin.price.toLocaleString()+"ユニ"}</p>
+<div class="shop-actions"><button class="${cls}" ${action?`onclick="${action}"`:"disabled"}>${text}</button></div>
+</div>`;
+}).join("");
 }
 
 function renderInventory(){
- const root=document.getElementById("inventory");
- if(!root)return;
-
- const owned=SKINS.filter(s=>data.ownedSkins.includes(s.id));
-
- if(!owned.length){
-  root.textContent="所持アイテムなし";
-  return;
- }
-
- root.innerHTML=owned.map(skin=>{
-  const equipped=data.equippedSkin===skin.id;
-
-  return `
-   <div class="listitem">
-    <strong>${escapeHTML(skin.name)}</strong>
-    ${equipped?'<p class="equipped-label">現在装備中</p>':`
-     <button class="primary" onclick="equipSkin('${skin.id}')">装備する</button>
-    `}
-   </div>
-  `;
- }).join("");
+const root=document.getElementById("inventory");
+const owned=SKINS.filter(s=>data.ownedSkins.includes(s.id));
+if(!owned.length){root.textContent="所持アイテムなし";return;}
+root.innerHTML=owned.map(skin=>{
+const equipped=data.equippedSkin===skin.id;
+return `<div class="listitem"><strong>${escapeHTML(skin.name)}</strong>
+${equipped?'<p class="equipped-label">現在装備中</p>':`<button class="primary" onclick="equipSkin('${skin.id}')">装備する</button>`}
+</div>`;
+}).join("");
 }
 
 function buySkin(id){
- const skin=getSkin(id);
-
- if(skin.id==="default"){
-  alert("通常の駒は最初から所持しています。");
-  return;
- }
-
- if(data.ownedSkins.includes(id)){
-  alert("この駒は購入済みです。");
-  return;
- }
-
- if(data.yun<skin.price){
-  alert("ユニが足りません。");
-  return;
- }
-
- if(!confirm(`${skin.name}を${skin.price}ユニで購入しますか？`)){
-  return;
- }
-
- data.yun-=skin.price;
- data.ownedSkins.push(id);
- data.inventory.push(skin.name);
-
- saveData();
- alert(`${skin.name}を購入しました！`);
+const skin=getSkin(id);
+if(skin.id==="default"){alert("通常の駒は最初から所持しています。");return;}
+if(data.ownedSkins.includes(id)){alert("この駒は購入済みです。");return;}
+if(data.yun<skin.price){alert("ユニが足りません。");return;}
+if(!confirm(`${skin.name}を${skin.price}ユニで購入しますか？`))return;
+data.yun-=skin.price;
+data.ownedSkins.push(id);
+data.inventory.push(skin.name);
+saveData();
+alert(`${skin.name}を購入しました！`);
 }
 
 function equipSkin(id){
- if(!data.ownedSkins.includes(id)){
-  alert("この駒はまだ所持していません。");
-  return;
- }
-
- data.equippedSkin=id;
- saveData();
-
- renderBoard();
- alert(`${getSkin(id).name}を装備しました！`);
+if(!data.ownedSkins.includes(id)){alert("この駒はまだ所持していません。");return;}
+data.equippedSkin=id;
+saveData();
+renderBoard();
+alert(`${getSkin(id).name}を装備しました！`);
 }
 
 function refreshUI(){
- const title=data.title||"初心者";
-
- document.getElementById("homeUser").textContent=
-  data.name?data.name+" さん / "+data.country:"プロフィールを設定してください。";
-
- document.getElementById("homeYun").textContent=data.yun+" ユニ";
- document.getElementById("profileName").textContent=data.name||"未設定";
- document.getElementById("profileCountry").textContent=data.country;
-
- const badge=document.getElementById("profileTitle");
- badge.textContent=title;
- badge.className="title "+titleClass(title);
-
- document.getElementById("wins").textContent=data.wins;
- document.getElementById("losses").textContent=data.losses;
- document.getElementById("draws").textContent=data.draws;
-
- const total=data.wins+data.losses+data.draws;
-
- document.getElementById("winrate").textContent=
-  total?Math.round(data.wins/total*100)+"%":"0%";
-
- document.getElementById("rating").textContent=data.rating;
- document.getElementById("yun").textContent=data.yun;
- document.getElementById("shopYun").textContent=data.yun;
-
- document.getElementById("history").innerHTML=
-  data.history.length
-  ?data.history.slice(0,20).map(h=>`<div class="listitem">${escapeHTML(h.result)} / ${escapeHTML(h.date)}</div>`).join("")
-  :"まだ対戦履歴がありません。";
-
- document.getElementById("rankingList").innerHTML=
-  `<div class="listitem">1位：${escapeHTML(data.name||"プレイヤー")} / レート ${data.rating}</div>`;
-
- renderShop();
- renderInventory();
-
- if(document.getElementById("nameInput").value===""){
-  document.getElementById("nameInput").value=data.name;
-  document.getElementById("countryInput").value=data.country;
-  document.getElementById("languageInput").value=data.language;
- }
+const title=data.title||"初心者";
+document.getElementById("homeUser").textContent=data.name?data.name+" さん / "+data.country:"プロフィールを設定してください。";
+document.getElementById("homeYun").textContent=data.yun+" ユニ";
+document.getElementById("profileName").textContent=data.name||"未設定";
+document.getElementById("profileCountry").textContent=data.country;
+const badge=document.getElementById("profileTitle");
+badge.textContent=title;
+badge.className="title "+titleClass(title);
+document.getElementById("wins").textContent=data.wins;
+document.getElementById("losses").textContent=data.losses;
+document.getElementById("draws").textContent=data.draws;
+const total=data.wins+data.losses+data.draws;
+document.getElementById("winrate").textContent=total?Math.round(data.wins/total*100)+"%":"0%";
+document.getElementById("rating").textContent=data.rating;
+document.getElementById("yun").textContent=data.yun;
+document.getElementById("shopYun").textContent=data.yun;
+document.getElementById("history").innerHTML=data.history.length
+?data.history.slice(0,20).map(h=>`<div class="listitem">${escapeHTML(h.result)} / ${escapeHTML(h.date)}</div>`).join("")
+:"まだ対戦履歴がありません。";
+document.getElementById("rankingList").innerHTML=`<div class="listitem">1位：${escapeHTML(data.name||"プレイヤー")} / レート ${data.rating}</div>`;
+renderShop();
+renderInventory();
+if(document.getElementById("nameInput").value===""){
+document.getElementById("nameInput").value=data.name;
+document.getElementById("countryInput").value=data.country;
+document.getElementById("languageInput").value=data.language;
+}
 }
 
 const EMPTY=0,BLACK=1,WHITE=2;
-const directions=[
- [-1,-1],[-1,0],[-1,1],
- [0,-1],[0,1],
- [1,-1],[1,0],[1,1]
+const directions=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+const weights=[
+[100,-25,10,5,5,10,-25,100],
+[-25,-45,-5,-5,-5,-5,-45,-25],
+[10,-5,8,3,3,8,-5,10],
+[5,-5,3,2,2,3,-5,5],
+[5,-5,3,2,2,3,-5,5],
+[10,-5,8,3,3,8,-5,10],
+[-25,-45,-5,-5,-5,-5,-45,-25],
+[100,-25,10,5,5,10,-25,100]
 ];
 
 let board=[];
@@ -523,253 +410,398 @@ let lastMove=null;
 let seconds=150;
 let timerHandle=null;
 let cpuLevel=8;
+let playerColor=BLACK;
+let cpuColor=WHITE;
 let moves=0;
+let gameFinished=false;
 
 function initialBoard(){
- const b=Array.from({length:8},()=>Array(8).fill(EMPTY));
- b[3][3]=WHITE;
- b[3][4]=BLACK;
- b[4][3]=BLACK;
- b[4][4]=WHITE;
- return b;
+const b=Array.from({length:8},()=>Array(8).fill(EMPTY));
+b[3][3]=WHITE;b[3][4]=BLACK;b[4][3]=BLACK;b[4][4]=WHITE;
+return b;
 }
 
-function opponent(color){
- return color===BLACK?WHITE:BLACK;
-}
+function opponent(color){return color===BLACK?WHITE:BLACK;}
 
 function getFlips(b,r,c,color){
- if(r<0||r>7||c<0||c>7||b[r][c]!==EMPTY)return [];
-
- let flips=[];
-
- for(const [dr,dc] of directions){
-  let rr=r+dr,cc=c+dc,line=[];
-
-  while(
-   rr>=0&&rr<8&&cc>=0&&cc<8&&
-   b[rr][cc]===opponent(color)
-  ){
-   line.push([rr,cc]);
-   rr+=dr;
-   cc+=dc;
-  }
-
-  if(
-   line.length&&rr>=0&&rr<8&&cc>=0&&cc<8&&
-   b[rr][cc]===color
-  ){
-   flips.push(...line);
-  }
- }
-
- return flips;
+if(r<0||r>7||c<0||c>7||b[r][c]!==EMPTY)return [];
+let flips=[];
+for(const [dr,dc] of directions){
+let rr=r+dr,cc=c+dc,line=[];
+while(rr>=0&&rr<8&&cc>=0&&cc<8&&b[rr][cc]===opponent(color)){
+line.push([rr,cc]);rr+=dr;cc+=dc;
+}
+if(line.length&&rr>=0&&rr<8&&cc>=0&&cc<8&&b[rr][cc]===color)flips.push(...line);
+}
+return flips;
 }
 
 function validMoves(b,color){
- const result=[];
-
- for(let r=0;r<8;r++){
-  for(let c=0;c<8;c++){
-   if(b[r][c]===EMPTY&&getFlips(b,r,c,color).length){
-    result.push([r,c]);
-   }
-  }
- }
-
- return result;
+const result=[];
+for(let r=0;r<8;r++)for(let c=0;c<8;c++)
+if(b[r][c]===EMPTY&&getFlips(b,r,c,color).length)result.push([r,c]);
+return result;
 }
 
 function place(b,r,c,color){
- const flips=getFlips(b,r,c,color);
+const flips=getFlips(b,r,c,color);
+if(!flips.length)return false;
+b[r][c]=color;
+flips.forEach(([rr,cc])=>b[rr][cc]=color);
+return true;
+}
 
- if(!flips.length)return false;
+function cloneBoard(b){return b.map(row=>row.slice());}
 
- b[r][c]=color;
- flips.forEach(([rr,cc])=>b[rr][cc]=color);
-
- return true;
+function countPieces(b){
+let black=0,white=0;
+for(const row of b)for(const v of row){
+if(v===BLACK)black++;
+if(v===WHITE)white++;
+}
+return {black,white};
 }
 
 function newGame(){
- if(!data.name){
-  alert("先にプロフィールを設定してください。");
-  showPage("home");
-  return;
- }
-
- clearInterval(timerHandle);
-
- board=initialBoard();
- current=BLACK;
- lastMove=null;
- moves=0;
- running=true;
- busy=false;
- seconds=150;
-
- cpuLevel=Number(document.getElementById("cpuLevel").value);
-
- document.getElementById("gameMessage").textContent="";
-
- renderBoard();
- updateScore();
- updateTurn();
- updateTimer();
-
- timerHandle=setInterval(()=>{
-  if(!running)return;
-
-  seconds--;
-  updateTimer();
-
-  if(seconds<=0)finishGame("時間切れ");
- },1000);
+if(!data.name){
+alert("先にプロフィールを設定してください。");
+showPage("home");
+return;
+}
+clearInterval(timerHandle);
+board=initialBoard();
+playerColor=Math.random()<0.5?BLACK:WHITE;
+cpuColor=opponent(playerColor);
+current=BLACK;
+lastMove=null;
+moves=0;
+running=true;
+busy=false;
+gameFinished=false;
+seconds=150;
+cpuLevel=Number(document.getElementById("cpuLevel").value);
+document.getElementById("gameMessage").textContent="";
+document.getElementById("colorInfo").textContent=
+"あなた："+(playerColor===BLACK?"黒":"白")+" / CPU："+(cpuColor===BLACK?"黒":"白");
+updateScore();
+updateTimer();
+updateTurn();
+renderBoard();
+timerHandle=setInterval(()=>{
+if(!running)return;
+seconds--;
+updateTimer();
+if(seconds<=0)finishGame("時間切れ");
+},1000);
+if(current===cpuColor){
+busy=true;
+renderBoard();
+setTimeout(cpuMove,500);
+}
 }
 
 function renderBoard(){
- const root=document.getElementById("board");
- root.innerHTML="";
-
- const legal=running&&!busy&&current===BLACK
-  ?validMoves(board,BLACK):[];
-
- const skin=getSkin(data.equippedSkin);
-
- for(let r=0;r<8;r++){
-  for(let c=0;c<8;c++){
-   const cell=document.createElement("button");
-   cell.className="cell";
-
-   const isLegal=legal.some(([x,y])=>x===r&&y===c);
-
-   if(isLegal)cell.classList.add("legal");
-
-   if(lastMove&&lastMove[0]===r&&lastMove[1]===c){
-    cell.classList.add("last");
-   }
-
-   if(board[r][c]!==EMPTY){
-    const stone=document.createElement("div");
-
-    stone.className="stone "+(board[r][c]===BLACK?"black":"white");
-
-    if(skin.className){
-     stone.classList.add(skin.className);
-    }
-
-    cell.appendChild(stone);
-   }
-
-   cell.disabled=!isLegal;
-   cell.onclick=()=>humanMove(r,c);
-
-   root.appendChild(cell);
-  }
- }
+const root=document.getElementById("board");
+root.innerHTML="";
+const legal=running&&!busy&&current===playerColor?validMoves(board,playerColor):[];
+const skin=getSkin(data.equippedSkin);
+for(let r=0;r<8;r++)for(let c=0;c<8;c++){
+const cell=document.createElement("button");
+cell.className="cell";
+const isLegal=legal.some(([x,y])=>x===r&&y===c);
+if(isLegal)cell.classList.add("legal");
+if(lastMove&&lastMove[0]===r&&lastMove[1]===c)cell.classList.add("last");
+if(board[r][c]!==EMPTY){
+const stone=document.createElement("div");
+stone.className="stone "+(board[r][c]===BLACK?"black":"white");
+if(skin.className)stone.classList.add(skin.className);
+cell.appendChild(stone);
+}
+cell.disabled=!isLegal;
+cell.onclick=()=>humanMove(r,c);
+root.appendChild(cell);
+}
 }
 
 function humanMove(r,c){
- if(!running||busy||current!==BLACK)return;
- if(!place(board,r,c,BLACK))return;
-
- lastMove=[r,c];
- moves++;
-
- afterMove();
+if(!running||busy||current!==playerColor)return;
+if(!place(board,r,c,playerColor))return;
+lastMove=[r,c];moves++;
+afterMove();
 }
 
 function afterMove(){
- renderBoard();
- updateScore();
-
- if(!running)return;
-
- const other=opponent(current);
-
- if(validMoves(board,other).length){
-  current=other;
- }else if(validMoves(board,current).length){
-  document.getElementById("gameMessage").textContent=
-   (current===BLACK?"白":"黒")+"は置ける場所がないためパスします。";
- }else{
-  finishGame("対局終了");
-  return;
- }
-
- updateTurn();
- renderBoard();
-
- if(current===WHITE){
-  busy=true;
-  renderBoard();
-  setTimeout(cpuMove,500);
- }
+renderBoard();
+updateScore();
+if(!running)return;
+const other=opponent(current);
+if(validMoves(board,other).length){
+current=other;
+}else if(validMoves(board,current).length){
+document.getElementById("gameMessage").textContent=
+(other===BLACK?"黒":"白")+"は置ける場所がないためパスします。";
+}else{
+finishGame("対局終了");
+return;
+}
+updateTurn();
+renderBoard();
+if(current===cpuColor){
+busy=true;
+renderBoard();
+setTimeout(cpuMove,450);
+}
 }
 
 function cpuMove(){
- if(!running)return;
-
- const list=validMoves(board,WHITE);
-
- if(!list.length){
-  current=BLACK;
-  busy=false;
-  updateTurn();
-  renderBoard();
-
-  if(!validMoves(board,BLACK).length){
-   finishGame("対局終了");
-  }
-
-  return;
- }
-
- const move=chooseCPU(board,WHITE,cpuLevel);
-
- place(board,move[0],move[1],WHITE);
- lastMove=move;
- moves++;
- busy=false;
- current=BLACK;
-
- updateScore();
- updateTurn();
- renderBoard();
-
- if(!validMoves(board,BLACK).length){
-  if(!validMoves(board,WHITE).length){
-   finishGame("対局終了");
-  }else{
-   document.getElementById("gameMessage").textContent=
-    "黒は置ける場所がないためパスします。";
-
-   current=WHITE;
-   busy=true;
-   setTimeout(cpuMove,500);
-  }
- }
+if(!running||current!==cpuColor)return;
+const list=validMoves(board,cpuColor);
+if(!list.length){
+current=playerColor;
+busy=false;
+document.getElementById("gameMessage").textContent="CPUは置ける場所がないためパスしました。";
+updateTurn();
+renderBoard();
+if(!validMoves(board,playerColor).length)finishGame("対局終了");
+return;
 }
-
-function cloneBoard(b){
- return b.map(row=>row.slice());
+const move=chooseCPU(board,cpuColor,cpuLevel);
+place(board,move[0],move[1],cpuColor);
+lastMove=move;
+moves++;
+busy=false;
+updateScore();
+const other=opponent(cpuColor);
+if(validMoves(board,other).length){
+current=other;
+}else if(validMoves(board,cpuColor).length){
+current=cpuColor;
+document.getElementById("gameMessage").textContent="あなたは置ける場所がないためパスします。";
+}else{
+finishGame("対局終了");
+return;
+}
+updateTurn();
+renderBoard();
+if(current===cpuColor){
+busy=true;
+renderBoard();
+setTimeout(cpuMove,450);
+}
 }
 
 function evaluate(b,color){
- const weights=[
-  [100,-25,10,5,5,10,-25,100],
-  [-25,-45,-5,-5,-5,-5,-45,-25],
-  [10,-5,8,3,3,8,-5,10],
-  [5,-5,3,2,2,3,-5,5],
-  [5,-5,3,2,2,3,-5,5],
-  [10,-5,8,3,3,8,-5,10],
-  [-25,-45,-5,-5,-5,-5,-45,-25],
-  [100,-25,10,5,5,10,-25,100]
- ];
+let score=0;
+let empty=0;
+for(let r=0;r<8;r++)for(let c=0;c<8;c++){
+if(b[r][c]===color)score+=weights[r][c];
+else if(b[r][c]===opponent(color))score-=weights[r][c];
+else empty++;
+}
+const mine=validMoves(b,color).length;
+const theirs=validMoves(b,opponent(color)).length;
+score+=(mine-theirs)*5;
+const counts=countPieces(b);
+const discDiff=counts.black-counts.white;
+score+=(color===BLACK?discDiff:-discDiff)*0.5;
+return score;
+}
 
- let score=0;
+function chooseCPU(b,color,level){
+const list=validMoves(b,color);
+if(!list.length)return null;
 
- for(let r=0;r<8;r++){
-  for(let c=0;c<8;c++){
-   if(b[r][c]===color)score+=weights[r][c];
-   else if(b[r][c]===opponent(color))score-=weights[r][c];
+const scored=list.map(move=>{
+const next=cloneBoard(b);
+place(next,move[0],move[1],color);
+let value=evaluate(next,color);
+
+const corner=(move[0]===0||move[0]===7)&&
+(move[1]===0||move[1]===7);
+if(corner)value+=100;
+
+const depth=level>=13?3:level>=9?2:1;
+
+if(depth>=2){
+const replies=validMoves(next,opponent(color));
+if(replies.length){
+let worst=Infinity;
+for(const reply of replies){
+const test=cloneBoard(next);
+place(test,reply[0],reply[1],opponent(color));
+worst=Math.min(worst,evaluate(test,color));
+}
+value+=worst*0.7;
+}
+}
+
+if(depth>=3){
+const replies=validMoves(next,opponent(color));
+if(replies.length){
+let best=0;
+for(const reply of replies){
+const test=cloneBoard(next);
+place(test,reply[0],reply[1],opponent(color));
+const nextMoves=validMoves(test,color);
+best=Math.max(best,nextMoves.length);
+}
+value+=best*2;
+}
+}
+
+return {move,value};
+});
+
+scored.sort((a,b)=>b.value-a.value);
+
+const randomness=Math.max(0,15-level);
+const pool=Math.max(1,Math.ceil(scored.length*randomness/20));
+const choice=Math.floor(Math.random()*pool);
+
+return scored[choice].move;
+}
+
+function updateScore(){
+const counts=countPieces(board);
+document.getElementById("score").textContent=
+"黒 "+counts.black+" - "+counts.white+" 白";
+}
+
+function updateTimer(){
+const min=Math.floor(seconds/60);
+const sec=seconds%60;
+document.getElementById("timer").textContent=
+String(min).padStart(2,"0")+":"+
+String(sec).padStart(2,"0");
+}
+
+function updateTurn(){
+if(!running)return;
+document.getElementById("turn").textContent=
+current===playerColor?"あなたの番です":
+"CPUの番です";
+}
+
+function passTurn(){
+if(!running||busy||current!==playerColor)return;
+
+if(validMoves(board,playerColor).length){
+alert("まだ置ける場所があります。");
+return;
+}
+
+if(validMoves(board,cpuColor).length){
+current=cpuColor;
+busy=true;
+document.getElementById("gameMessage").textContent=
+"あなたはパスしました。";
+updateTurn();
+renderBoard();
+setTimeout(cpuMove,450);
+}else{
+finishGame("対局終了");
+}
+}
+
+function resign(){
+if(!running)return;
+if(!confirm("対局を投了しますか？"))return;
+finishGame("投了");
+}
+
+function finishGame(reason){
+if(gameFinished)return;
+
+gameFinished=true;
+running=false;
+busy=false;
+clearInterval(timerHandle);
+
+const counts=countPieces(board);
+let result="引分";
+
+if(reason==="投了"||reason==="時間切れ"){
+result="敗北";
+}else if(
+(playerColor===BLACK&&counts.black>counts.white)||
+(playerColor===WHITE&&counts.white>counts.black)
+){
+result="勝利";
+}else if(
+(playerColor===BLACK&&counts.black<counts.white)||
+(playerColor===WHITE&&counts.white<counts.black)
+){
+result="敗北";
+}
+
+if(result==="勝利"){
+data.wins++;
+data.yun+=100;
+data.rating+=20;
+}else if(result==="敗北"){
+data.losses++;
+data.rating=Math.max(0,data.rating-15);
+}else{
+data.draws++;
+data.yun+=50;
+}
+
+data.history.unshift({
+result:result,
+date:new Date().toLocaleString("ja-JP"),
+opponent:"CPU"
+});
+
+data.history=data.history.slice(0,100);
+
+saveData();
+
+document.getElementById("turn").textContent="対局終了";
+document.getElementById("gameMessage").textContent=
+reason+" / "+result+
+" / 黒 "+counts.black+" - "+counts.white+" 白";
+
+renderBoard();
+
+alert(
+"対局終了！\n"+
+result+"\n"+
+"黒 "+counts.black+" - "+counts.white+" 白"
+);
+}
+
+function searchOpponent(){
+document.getElementById("searchStatus").textContent=
+"オンライン対戦機能はまだ準備中です。";
+}
+
+function createRoom(){
+const number=String(Math.floor(Math.random()*1000000))
+.padStart(6,"0");
+const letter=String.fromCharCode(65+Math.floor(Math.random()*26));
+const code=number+letter;
+
+document.getElementById("roomDisplay").textContent=
+"ルームコード："+code;
+
+document.getElementById("roomInput").value=code;
+}
+
+function joinRoom(){
+const code=document.getElementById("roomInput").value.trim().toUpperCase();
+
+if(!/^\d{6}[A-Z]$/.test(code)){
+alert("6桁の数字と英大文字1文字を入力してください。");
+return;
+}
+
+alert("現在、オンライン接続機能は未実装です。");
+}
+
+refreshUI();
+renderBoard();
+showPage("home");
+
+</script>
+</body>
+</html>
