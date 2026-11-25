@@ -1,0 +1,11 @@
+name = "yuniverse3-othello"
+compatibility_date = "2026-11-25"
+pages_build_output_dir = "."
+
+[[durable_objects.bindings]]
+name = "OTHELLO_ROOMS"
+class_name = "OthelloRoom"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["OthelloRoom"]
